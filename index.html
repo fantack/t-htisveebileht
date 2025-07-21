@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asjad mida koolis ei õpetata</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .banner {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://i.pinimg.com/736x/f0/1a/9f/f01a9f49ddfec3b3f84c8dd6793fff7b.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .banner-content {
+            max-width: 800px;
+            padding: 2rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .banner h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 4rem 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .content-card:hover::before {
+            left: 100%;
+        }
+
+        .content-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .content-card:hover .card-image {
+            transform: scale(1.05);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .card-preview {
+            font-size: 1rem;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .click-hint {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .content-card:hover .click-hint {
+            opacity: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 3rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #ff6b6b;
+            transform: scale(1.1);
+        }
+
+        .modal-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #34495e;
+        }
+
+        .modal-text h3 {
+            color: #e74c3c;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .modal-text p {
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .banner h1 {
+                font-size: 2.5rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .modal-content {
+                margin: 5% auto;
+                padding: 2rem;
+                width: 95%;
+            }
+            
+            .content-card {
+                padding: 1.5rem;
+            }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Banner Section -->
+    <section class="banner">
+        <div class="banner-content">
+            <h1>Asjad mida koolis ei õpetata, mida võiksime teada</h1>
+        </div>
+        <div class="scroll-indicator">
+            <div style="font-size: 1.2rem;">⬇ Keri alla</div>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+        <div class="container">
+            <div class="content-grid">
+                <!-- Card 1.1 -->
+                <div class="content-card" onclick="openModal('modal1')">
+                    <img src="https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F9f15e24a-9b1e-4ff4-83c1-22c923108111.png" alt="Investeerimine" class="card-image">
+                    <div class="card-title">Kuidas alustada investeerimist targalt</div>
+                    <div class="card-preview">Õpi põhitõdesid investeerimisest ja kuidas targalt alustada</div>
+                    <div class="click-hint">Klikka et vaadata lähemalt</div>
+                </div>
+
+                <!-- Card 1.2 -->
+                <div class="content-card" onclick="openModal('modal2')">
+                    <img src="https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2Ff4500fb0-9491-4724-b59a-cf020d70f294.png" alt="Ettevõtlus" class="card-image">
+                    <div class="card-title">Kuidas ettevõtluses edukalt tegutseda</div>
+                    <div class="card-preview">Eduka ettevõtluse põhialused ja praktilised nõuanded</div>
+                    <div class="click-hint">Klikka et vaadata lähemalt</div>
+                </div>
+
+                <!-- Card 2.1 -->
+                <div class="content-card" onclick="openModal('modal3')">
+                    <img src="https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F5fcef01d-07e0-476e-98f5-b77c45be8e78.png" alt="Julgelt rääkimine" class="card-image">
+                    <div class="card-title">Kuidas rääkida julgelt</div>
+                    <div class="card-preview">Õpi esinemisoskust ja julgelt rääkimise tehnikaid</div>
+                    <div class="click-hint">Klikka et vaadata lähemalt</div>
+                </div>
+
+                <!-- Card 2.2 -->
+                <div class="content-card" onclick="openModal('modal4')">
+                    <img src="https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F2438ab79-00d8-4149-b75f-bf86735dc6c1.png" alt="Kutsumus" class="card-image">
+                    <div class="card-title">Kuidas leida oma tee ehk kutsumus</div>
+                    <div class="card-preview">Juhised oma eesmärkide ja kutsumuse avastamiseks</div>
+                    <div class="click-hint">Klikka et vaadata lähemalt</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal 1 - Investeerimine -->
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal1')">&times;</span>
+            <img src="https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F9f15e24a-9b1e-4ff4-83c1-22c923108111.png" alt="Investeerimine" class="modal-image">
+            <div class="modal-title">Kuidas alustada investeerimist targalt</div>
+            <div class="modal-text">
+                <h3>1. Määra oma eesmärgid ja ajahorisont</h3>
+                <p>Enne investeerima asumist on oluline mõista, miks sa investeerid ja millal sul raha vaja läheb.</p>
+                <p>Mis on sinu eesmärgid? Kas säästad pensioniks, uue kodu sissemaksuks, laste hariduseks või millekski muuks?</p>
+                <p>Milline on sinu ajahorisont? Kas plaanid investeerida 5, 10, 20 või enamaks aastaks? Pikaajaline investeerimine annab tavaliselt paremad tulemused, kuna aja jooksul on võimalik üle elada turu kõikumisi.</p>
+
+                <h3>2. Hinda oma riskitaluvust</h3>
+                <p>Investeerimisega kaasneb alati risk. On oluline teada, kui suurt riski oled valmis võtma.</p>
+                <p>Mugavustase: Kas oled valmis taluma oma investeeringute väärtuse kõikumist? Mõned investeeringud on volatiiilsemad (nt aktsiad) kui teised (nt võlakirjad või hoiused).</p>
+                <p>Kaalu oma finantsolukorda: Kas sul on piisav puhverfond ootamatuteks kuludeks? Enne investeerimist peaks sul olema kõrvale pandud vähemalt 3-6 kuu elamiskulude summa.</p>
+                <p>Kui te ei soovi suuri riske võtta on soovitav investeerida umbes 5-15% oma sissetulekust, kui soovite suuremaid riske siis pole soovitav investeerida üle 50% oma sissetulekust.</p>
+
+                <h3>3. Haridus ja uurimistöö</h3>
+                <p>Ära investeeri millessegi, millest sa aru ei saa.</p>
+                <p>Tutvu erinevate investeerimisinstrumentidega:</p>
+                <p><strong>Aktsiad:</strong> Osalus ettevõttes. Potentsiaalselt kõrge tootlus, aga ka suurem risk.</p>
+                <p><strong>Võlakirjad:</strong> Laen ettevõttele või riigile, mis maksab intresse. Madalam risk kui aktsiatel.</p>
+                <p><strong>Fondid:</strong> Koondavad paljude investorite raha ja investeerivad laiali. Indeksfondid ja ETF-id on algajatele sageli soovitatavad.</p>
+                <p><strong>Kinnisvara:</strong> Nõuab suuremat algkapitali ja on vähem likviidne.</p>
+                <p><strong>Krüptoraha:</strong> Digitaalne valuuta, millega kaasnevad kõige suuremad riskid.</p>
+
+                <h3>4. Koosta eelarve ja alusta säästmisega</h3>
+                <p>Enne investeerimist veendu, et sinu rahalised asjad on korras.</p>
+                <p>Koosta detailne eelarve, et näha, kuhu sinu raha läheb ja kui palju kulutad.</p>
+                <p>Vähenda ebavajalikke kulutusi ja suurenda oma säästmise võimekust.</p>
+                <p>Maksa tagasi kõrge intressiga võlad (nt krediitkaardivõlad), kuna nende intressimäär ületab sageli võimalikku investeerimistootlust.</p>
+
+                <h3>5. Vali platvorm ja alusta väikselt</h3>
+                <p>Vali sobiv platvorm: Uuri erinevaid pankasid ja investeerimisplatvorme (nt LHV, Swedbank, SEB, Interactive Brokers, Lightyear).</p>
+                <p>Alusta väikeste summadega: Sa ei pea kohe suuri summasid investeerima. Võid alustada kasvõi 10-50 euroga kuus ja järk-järgult summasid suurendada.</p>
+
+                <h3>6. Hajuta oma investeeringud</h3>
+                <p>Ära pane kõiki mune ühte korvi!</p>
+                <p>Hajutamine erinevate varaklasside vahel: Investeeri nii aktsiatesse, võlakirjadesse kui ka teistesse varadesse.</p>
+                <p>Hajutamine geograafiliselt: Ära investeeri ainult ühte riiki või piirkonda.</p>
+                <p>Hajutamine sektorite lõikes: Ära keskendu ainult ühele majandussektorile.</p>
+
+                <h3>7. Jälgi, aga ära paanitse</h3>
+                <p>Investeerimine on tavaliselt pikaajaline protsess. Turul on alati tõusud ja mõõnad.</p>
+                <p>Jälgi oma investeeringuid, kuid ära reageeri iga väikesele kõikumisele.</p>
+                <p>Väldi emotsionaalseid otsuseid. Paanikas müümine kahjumiga on üks sagedasemaid vigu.</p>
+                <p>Tee regulaarselt oma portfelli ülevaade ja vajadusel kohanda seda vastavalt oma eesmärkidele.</p>
+
+                <h3>8. Kui ei julge väga investeerida</h3>
+                <p>Neile kes ei julge väga investeerida on soovitatav investeerida fondidesse või maavaradesse.</p>
+                <p>Kuld on üks stabiilsemaid tõusnud maavara mille väärtus pidevalt tõuseb.</p>
+                <p>S&P 500 - USA-s on ühed suurimad ettevõtted maailmas mis aina kasvavad.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2 - Ettevõtlus -->
+    <div id="modal2" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal2')">&times;</span>
+            <img src="https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2Ff4500fb0-9491-4724-b59a-cf020d70f294.png" alt="Ettevõtlus" class="modal-image">
+            <div class="modal-title">Kuidas ettevõtluses edukalt tegutseda</div>
+            <div class="modal-text">
+                <p>Edukas tegutsemine ettevõtluses nõuab mitme olulise teguri koosmõju, kuid on oluline mõista, et ettevõtja roll ei sobi igaühele. See eeldab teatud iseloomuomadusi ja valmisolekut riskideks, mida mitte kõik ei pruugi omada või soovida.</p>
+
+                <h3>Eduka ettevõtluse põhialused</h3>
+
+                <h3>1. Kirg ja visioon</h3>
+                <p>Edukad ettevõtjad on sügavalt motiveeritud ja neil on selge nägemus, mida nad saavutada tahavad. Kui sa ei usu oma ideesse, on raske veenda teisi või hoida motivatsiooni rasketel aegadel.</p>
+
+                <h3>2. Probleemi lahendamine</h3>
+                <p>Parimad ettevõtted lahendavad tegeliku probleemi või pakuvad väärtust, mida turul vajatakse. Uuri, mida inimesed vajavad, ja paku sellele parim lahendus. See ei pea alati olema "uus" lahendus, vaid ka "parem" või "taskukohasem".</p>
+
+                <h3>3. Tugev meeskond</h3>
+                <p>Sa ei pea kõike ise tegema. Leia inimesi, kes täiendavad sinu oskuseid ja kellega sul on sarnased väärtused. Usaldusväärne ja kompetentne meeskond on edu võti. Kui sa tahad saada suurt ettevõtet on vajalik et sul oleks tiim kuna tiimita on väga raske üksi hakkama saada. Suure ettevõtte pidamiseks on soovitav minimaalselt 3 inimest.</p>
+
+                <h3>4. Erinevad ettevõtlused</h3>
+                <p>Ettevõtteid saab luua 2 erinevat: väike ettevõte ja suur ettevõte.</p>
+                <p>Väikest ettevõtet saab teha igaüks näiteks remondi töökoda ja sõõrikute müümine, kui olete isegi palgalise töö peal saate teenida raha kõrvalt väikse ettevõttelt, aga kui võtta puhkus pole soovitav siis tegeleda oma ettevõttega ainult vaid on soovitav puhata kuna puhkamine on väga vajalik.</p>
+                <p>Suure ettevõtte asutamiseks on sul vaja juba suhteliselt palju raha. Suur ettevõte saab toimida ka ilma et sind oleks koha peal, mis annab suurema vabaduse.</p>
+
+                <h3>5. Turundus ja müük</h3>
+                <p>Isegi parim toode või teenus ei müü ennast ise. Sa pead oskama oma väärtuspakkumist sihtrühmale edastada ja neid ostma veenda ja oleneb ka riigist ja mis sihtgrupile müüd näiteks kui müüa Eestis siis on tähtis soodne hind.</p>
+
+                <h3>6. Riskijuhtimine</h3>
+                <p>Ettevõtlus on riskantne. Mõista võimalikke riske ja püüa neid maandada. See ei tähenda riskide vältimist, vaid nende teadlikku hindamist ja juhtimist. Turg muutub pidevalt. Ole valmis õppima uusi asju, katsetama ja vajadusel oma plaane kohandama. Paindlikkus on ettevõtluses ülioluline.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3 - Julgelt rääkimine -->
+    <div id="modal3" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal3')">&times;</span>
+            <img src="https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F5fcef01d-07e0-476e-98f5-b77c45be8e78.png" alt="Julgelt rääkimine" class="modal-image">
+            <div class="modal-title">Kuidas rääkida julgelt</div>
+            <div class="modal-text">
+                <p>Julgelt rääkimine on oskus, mida saab arendada ja mis tuleb kasuks nii avalikel esinemistel kui ka igapäevasuhtluses. See pole niivõrd loomupärane anne, kuivõrd harjutamise ja õppimise tulemus.</p>
+
+                <h3>1. Ettevalmistus on võti</h3>
+                <p><strong>Tunne oma teemat:</strong> Mida paremini sa materjali valdad, seda kindlamalt sa end tunned. Uuri, süvene ja veendu, et saad aru sellest, millest räägid. Kui oled teadmistes tugev, kaob suur osa ebakindlusest.</p>
+                <p><strong>Harjuta, harjuta, harjuta:</strong> Korda oma juttu valjult ette, salvesta end videole või räägi peeglisse. See aitab sul leida õige sõnastuse, tempo ja kohad, kus pause teha. Mida rohkem sa harjutad, seda loomulikumaks jutt muutub.</p>
+                <p><strong>Struktureeri oma mõtted:</strong> Koosta selge plaan või märksõnade loetelu. Sa ei pea kõike sõna-sõnalt pähe õppima, aga tea, mis on sinu peamised punktid ja millises järjekorras sa neist räägid.</p>
+
+                <h3>2. Kehakeel ja hääl</h3>
+                <p><strong>Hoia hea rüht:</strong> Seisa sirgelt, õlad taga ja pea püsti. Avatud kehahoiak annab edasi kindlustunde ja aitab sul end ka ise enesekindlamana tunda.</p>
+                <p><strong>Kasuta käsi:</strong> Žestikuleerimine aitab sul mõtteid edasi anda ja annab su esitusele energiat. Väldi aga liiga närvilisi või pidevaid liigutusi.</p>
+                <p><strong>Silmside:</strong> Loo silmside oma kuulajatega. Ära vaata põrandale ega lakke. Kui ruum on suur, vali välja mõned sõbralikud näod ja vaata kordamööda neile silma.</p>
+
+                <h3>3. Mõtteviis ja hirmudega toimetulek</h3>
+                <p><strong>Närvilisus on normaalne:</strong> Pea meeles, et enamik inimesi tunneb enne esinemist pinget. Oluline on see pinge ära tunda ja see positiivseks energiaks muuta. Sügav hingamine aitab stressihormoone maandada.</p>
+                <p><strong>Keskendu oma sõnumile:</strong> Kui sa keskendud sellele, mida sa tahad edasi anda ja kuidas see kuulajaid aitab, unustad sa vähemalt korraks oma ebakindluse.</p>
+                <p><strong>Ole sina ise:</strong> Ära proovi olla keegi teine. Autentsus on alati veenvam. Kui teed vea, naerata ja mine edasi. Inimesed hindavad siirust.</p>
+                <p><strong>Alusta väikselt:</strong> Kui sa ei tunne end avalikul esinemisel mugavalt, alusta väiksemast grupist või olukorrast, kus pead vaid paar lauset ütlema. Samm-sammult suurenda oma mugavustsooni.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4 - Kutsumus -->
+    <div id="modal4" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal4')">&times;</span>
+            <img src="https://www.krea.ai/api/img?f=webp&i=https%3A%2F%2Fgen.krea.ai%2Fimages%2F2438ab79-00d8-4149-b75f-bf86735dc6c1.png" alt="Kutsumus" class="modal-image">
+            <div class="modal-title">Kuidas leida oma tee ehk kutsumus</div>
+            <div class="modal-text">
+                <p>Oma tee ehk kutsumuse leidmine on sügav ja isiklik teekond, mis harva toimub üleöö. See on pigem protsess, mis nõuab eneserefleksiooni, katsetamist ja julgust.</p>
+
+                <h3>1. Eneserefleksioon ja eneseteadvus</h3>
+                <p><strong>Mis sulle tõeliselt meeldib ja pakub huvi?</strong> Mõtle tegevustele, mis panevad su silmad särama ja aja unustama. Need võivad olla hobid, teemad, millest sa tahad pidevalt lugeda või õppida, või tegevused, mis pakuvad sulle sügavat rahulolu.</p>
+                <p><strong>Millistes tegevustes oled sa loomulikult hea?</strong> Mõtle oma tugevustele ja oskustele – nii nendele, mis on akadeemilised või tööalased, kui ka neile, mis on seotud suhtlemise, probleemilahendamise või loovusega. Küsi ka sõpradelt või perelt, milles nad sind andekaks peavad.</p>
+                <p><strong>Millised on sinu väärtused?</strong> Mida sa elus kõige olulisemaks pead? Kas see on aidata teisi, luua midagi uut, saavutada finantsiline vabadus, veeta aega perega või midagi muud? Sinu kutsumus on sageli kooskõlas sinu sügavamate väärtustega.</p>
+                <p><strong>Milliseid probleeme sa tahaksid lahendada?</strong> Kas on teemasid või valdkondi, mis sind häirivad ja millele sa tahaksid lahendust leida või panustada?</p>
+
+                <h3>2. Katsetamine ja kogemuste kogumine</h3>
+                <p><strong>Proovi uusi asju:</strong> Ära karda astuda oma mugavustsoonist välja. See võib olla vabatahtlik töö, lühikursus uuel alal, uue hobi proovimine või lihtsalt uute inimestega suhtlemine. Mida rohkem sa proovid, seda suurem on tõenäosus, et avastad midagi uut enda kohta.</p>
+                <p><strong>Praktika ja varjutamine:</strong> Kui mingi valdkond pakub huvi, proovi leida võimalusi selle sees praktikat teha või "varjutada" kedagi, kes seal töötab. See annab hea ülevaate igapäevatööst ja aitab mõista, kas see sobib sulle.</p>
+                <p><strong>Õpi teiste kogemustest:</strong> Loe raamatuid, vaata dokumentaalfilme või kuula podcaste inimestest, kes on oma kutsumuse leidnud. Nende lood võivad anda inspiratsiooni ja praktilisi ideid.</p>
+
+                <h3>3. Ole kannatlik ja paindlik</h3>
+                <p><strong>Kutsumus ei pruugi olla üks asi:</strong> Mõne jaoks on kutsumus üks kindel amet või tegevus kogu eluks. Teiste jaoks võib see olla teemade või tegevuste kombinatsioon, mis ajas muutub ja areneb. Ole avatud erinevatele võimalustele.</p>
+                <p><strong>Ära karda suunda muuta:</strong> On täiesti normaalne, kui avastad, et see, mis sulle varem meeldis, enam ei sobi. Elu on pidev õppimine ja arenemine.</p>
+                <p><strong>Tee väikeseid samme:</strong> Sa ei pea kohe oma praegusest elust loobuma, et leida oma kutsumust. Sa saad seda teha tasapisi, pühendades aega enesereflektsioonile ja katsetamisele samal ajal, kui sul on olemas stabiilne sissetulek.</p>
+
+                <h3>4. Soovitus mida teha selle otsimisel</h3>
+                <p><strong>Tegude kirja panemine:</strong> Kui hakkad katsetama mis on su kirg, pane kirja tegevused milles oled head, tegevused mis sulle meeldivad. Kui oled pannud kirja need tegevused on sul lihtne otsida mille sa valid või võtta seal midagi kokku mis sobib su kirega.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let i = 0; i < modals.length; i++) {
+                if (event.target == modals[i]) {
+                    modals[i].style.display = "none";
+                    document.body.style.overflow = "auto";
+                }
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = document.getElementsByClassName('modal');
+                for (let i = 0; i < modals.length; i++) {
+                    if (modals[i].style.display === "block") {
+                        modals[i].style.display = "none";
+                        document.body.style.overflow = "auto";
+                    }
+                }
+            }
+        });
+
+        // Smooth scrolling for scroll indicator
+        document.querySelector('.scroll-indicator').addEventListener('click', function() {
+            document.querySelector('.content-section').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+
+        // Add scroll animation to cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.content-card');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                observer.observe(card);
+            });
+        });
+
+        // Add CSS animation for card entrance
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
